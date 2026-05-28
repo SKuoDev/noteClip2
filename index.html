@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#005b3f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NoteClip 2.0">
+    <title>NoteClip 2.0</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="top-bar">
+        <div>
+          <p class="eyebrow">Pest service note composer</p>
+          <h1>NoteClip 2.0</h1>
+        </div>
+        <div class="status-pill" id="copyStatus" role="status" aria-live="polite">Ready</div>
+      </header>
+
+      <section class="workspace" aria-label="Note builder">
+        <form class="builder" id="noteForm">
+          <section class="panel" aria-labelledby="issuesTitle">
+            <div class="panel-heading">
+              <p class="step-label">Service findings</p>
+              <h2 id="issuesTitle">Insect issues seen</h2>
+            </div>
+            <div class="pill-stack vertical" id="issueList" aria-label="Main pest issues"></div>
+            <div class="sub-panel is-hidden" id="antPanel" aria-labelledby="antTitle">
+              <h3 id="antTitle">Ant species</h3>
+              <div class="pill-stack" id="antList" aria-label="Ant species found"></div>
+            </div>
+            <div class="sub-panel is-hidden" id="spiderPanel" aria-labelledby="spiderTitle">
+              <h3 id="spiderTitle">Spider activity</h3>
+              <div class="pill-stack" id="spiderList" aria-label="Spider activity found"></div>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="conditionsTitle">
+            <div class="panel-heading">
+              <p class="step-label">Property conditions</p>
+              <h2 id="conditionsTitle">Conducive conditions</h2>
+            </div>
+            <div class="pill-stack" id="conditionList" aria-label="Conducive conditions"></div>
+          </section>
+
+          <section class="panel compact" aria-labelledby="gateTitle">
+            <div class="panel-heading">
+              <p class="step-label">Access note</p>
+              <h2 id="gateTitle">Gate status</h2>
+            </div>
+            <div class="segmented" id="gateList" aria-label="Gate status"></div>
+          </section>
+
+          <section class="panel" aria-labelledby="houseTitle">
+            <div class="panel-heading">
+              <p class="step-label">Technician detail</p>
+              <h2 id="houseTitle">House Specific: <span>(recommended)</span></h2>
+            </div>
+            <label class="text-field">
+              <span>What made this house unique today?</span>
+              <textarea id="houseSpecific" rows="5" placeholder="Example: heavy ghost ant trail by kitchen window, treated lanai corners, customer asked about webs near pool cage."></textarea>
+            </label>
+          </section>
+        </form>
+
+        <aside class="output" aria-label="Generated note">
+          <section class="note-preview">
+            <div class="preview-heading">
+              <div>
+                <p class="step-label">Generated note</p>
+                <h2>Customer-ready service note</h2>
+              </div>
+              <button class="utility-button" id="resetButton" type="button">Reset</button>
+            </div>
+            <textarea id="generatedNote" aria-label="Generated service note"></textarea>
+            <div class="action-row">
+              <button class="primary-button" id="generateButton" type="button">Generate note</button>
+              <button class="secondary-button" id="copyNoteButton" type="button">Copy note</button>
+            </div>
+          </section>
+
+          <section class="context-panel">
+            <details>
+              <summary>Manual AI polish prompt</summary>
+              <textarea id="llmPrompt" aria-label="Manual AI polish prompt" readonly></textarea>
+              <button class="secondary-button full-width" id="copyPromptButton" type="button">Copy AI prompt</button>
+            </details>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
