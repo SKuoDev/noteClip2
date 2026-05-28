@@ -135,6 +135,7 @@ const generateButton = document.querySelector("#generateButton");
 const copyNoteButton = document.querySelector("#copyNoteButton");
 const copyPromptButton = document.querySelector("#copyPromptButton");
 const resetButton = document.querySelector("#resetButton");
+const topResetButton = document.querySelector("#topResetButton");
 
 function createToggleButton(label, selected, onClick, className = "pill-button") {
   const button = document.createElement("button");
@@ -460,6 +461,7 @@ generateButton.addEventListener("click", () => {
 copyNoteButton.addEventListener("click", () => copyText(generatedNote.value, "Note copied"));
 copyPromptButton.addEventListener("click", () => copyText(llmPrompt.value, "Prompt copied"));
 resetButton.addEventListener("click", resetForm);
+topResetButton.addEventListener("click", resetForm);
 
 renderSelections();
 syncOutputs();

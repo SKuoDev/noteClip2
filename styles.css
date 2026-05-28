@@ -113,6 +113,22 @@ h3 {
   box-shadow: var(--shadow);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-reset-button {
+  min-height: 42px;
+  border: 1px solid var(--yellow);
+  border-radius: 8px;
+  background: var(--yellow);
+  color: var(--accent-strong);
+  padding: 9px 12px;
+  font-weight: 900;
+}
+
 .status-pill.is-success {
   border-color: var(--yellow);
   background: var(--yellow);
@@ -361,6 +377,15 @@ summary {
   }
 
   .status-pill {
+    width: 100%;
+  }
+
+  .header-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .header-reset-button {
     width: 100%;
   }
 
