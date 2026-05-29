@@ -27,31 +27,34 @@
           <section class="panel" aria-labelledby="issuesTitle">
             <div class="panel-heading">
               <p class="step-label">Service findings</p>
-              <h2 id="issuesTitle">Insect issues seen</h2>
+              <h2 id="issuesTitle" class="visually-hidden">Service findings</h2>
             </div>
-            <div class="pill-stack vertical" id="issueList" aria-label="Main pest issues"></div>
-            <div class="sub-panel is-hidden" id="antPanel" aria-labelledby="antTitle">
-              <h3 id="antTitle">Ant species</h3>
-              <div class="pill-stack" id="antList" aria-label="Ant species found"></div>
+            <div class="pill-stack area-stack" id="issueList" aria-label="Service area"></div>
+            <div class="sub-panel is-hidden" id="exteriorPanel" aria-labelledby="exteriorTitle">
+              <h3 id="exteriorTitle">Exterior findings</h3>
+              <div class="finding-list" id="exteriorIssueList" aria-label="Exterior pest issues"></div>
             </div>
-            <div class="sub-panel is-hidden" id="spiderPanel" aria-labelledby="spiderTitle">
-              <h3 id="spiderTitle">Spider activity</h3>
-              <div class="pill-stack" id="spiderList" aria-label="Spider activity found"></div>
+            <div class="sub-panel is-hidden" id="interiorPanel" aria-labelledby="interiorTitle">
+              <h3 id="interiorTitle">Interior findings</h3>
+              <div class="finding-list" id="interiorIssueList" aria-label="Interior pest issues"></div>
             </div>
           </section>
 
           <section class="panel" aria-labelledby="conditionsTitle">
             <div class="panel-heading">
               <p class="step-label">Property conditions</p>
-              <h2 id="conditionsTitle">Conducive conditions</h2>
+              <h2 id="conditionsTitle" class="visually-hidden">Property conditions</h2>
             </div>
-            <div class="pill-stack" id="conditionList" aria-label="Conducive conditions"></div>
+            <button class="reveal-button" id="conditionsToggle" type="button" aria-expanded="false" aria-controls="conditionListWrap">Add conducive conditions</button>
+            <div class="sub-panel is-hidden" id="conditionListWrap">
+              <div class="pill-stack" id="conditionList" aria-label="Conducive conditions"></div>
+            </div>
           </section>
 
           <section class="panel compact" aria-labelledby="gateTitle">
             <div class="panel-heading">
               <p class="step-label">Access note</p>
-              <h2 id="gateTitle">Gate status</h2>
+              <h2 id="gateTitle" class="visually-hidden">Access note</h2>
             </div>
             <div class="segmented" id="gateList" aria-label="Gate status"></div>
           </section>
@@ -59,7 +62,7 @@
           <section class="panel" aria-labelledby="houseTitle">
             <div class="panel-heading">
               <p class="step-label">Technician detail</p>
-              <h2 id="houseTitle">House Specific: <span>(recommended)</span></h2>
+              <h2 id="houseTitle" class="visually-hidden">House specific detail</h2>
             </div>
             <label class="text-field">
               <span>What made this house unique today?</span>
@@ -77,7 +80,7 @@
               </div>
               <button class="utility-button" id="resetButton" type="button">Reset</button>
             </div>
-            <textarea id="generatedNote" aria-label="Generated service note"></textarea>
+            <p class="generated-note-text" id="generatedNote" aria-label="Generated service note"></p>
             <div class="action-row">
               <button class="primary-button" id="generateButton" type="button">Generate note</button>
               <button class="secondary-button" id="copyNoteButton" type="button">Copy note</button>
@@ -85,11 +88,7 @@
           </section>
 
           <section class="context-panel">
-            <details>
-              <summary>Manual AI polish prompt</summary>
-              <textarea id="llmPrompt" aria-label="Manual AI polish prompt" readonly></textarea>
-              <button class="secondary-button full-width" id="copyPromptButton" type="button">Copy AI prompt</button>
-            </details>
+            <button class="secondary-button full-width" id="copyPromptButton" type="button">Copy Prompt</button>
           </section>
         </aside>
       </section>

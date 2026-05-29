@@ -1,9 +1,6 @@
-const issues = [
-  { id: "ants", label: "Ants" },
-  { id: "spiders", label: "Spiders" },
-  { id: "millipedes", label: "Millipedes" },
-  { id: "wasps", label: "Wasp nests" },
-  { id: "roaches", label: "Roaches" },
+const serviceAreas = [
+  { id: "exterior", label: "Exterior" },
+  { id: "interior", label: "Interior" },
 ];
 
 const antSpecies = [
@@ -19,7 +16,91 @@ const antSpecies = [
   "Pharaoh ants",
 ];
 
-const spiderActivity = ["Webs", "Grass/bushes"];
+const exteriorSpiderActivity = ["Webs", "Grass/bushes"];
+const interiorSpiderActivity = ["Webs", "Corners/closets", "Garage"];
+
+const findingGroups = {
+  exterior: [
+    {
+      id: "exterior-ants",
+      kind: "ants",
+      label: "Ants",
+      subheading: "Ant species",
+      options: antSpecies,
+    },
+    {
+      id: "exterior-millipedes",
+      kind: "millipedes",
+      label: "Millipedes",
+    },
+    {
+      id: "exterior-roaches",
+      kind: "roaches",
+      label: "Roaches",
+    },
+    {
+      id: "exterior-spiders",
+      kind: "spiders",
+      label: "Spiders",
+      subheading: "Spider activity",
+      options: exteriorSpiderActivity,
+    },
+    {
+      id: "exterior-wasps",
+      kind: "wasps",
+      label: "Wasp nests",
+    },
+  ],
+  interior: [
+    {
+      id: "interior-ants",
+      kind: "ants",
+      label: "Ants",
+      subheading: "Ant species",
+      options: antSpecies,
+    },
+    {
+      id: "interior-roaches",
+      kind: "interior-roaches",
+      label: "Cockroaches",
+      subheading: "Roach type",
+      options: ["German roaches", "American roaches", "Smokybrown roaches", "Australian roaches", "Oriental roaches"],
+    },
+    {
+      id: "interior-flies",
+      kind: "flies",
+      label: "Flies/gnats",
+      subheading: "Fly or gnat type",
+      options: ["Drain flies", "Fruit flies", "House flies", "Fungus gnats"],
+    },
+    {
+      id: "interior-occasional",
+      kind: "occasional",
+      label: "Occasional invaders",
+      subheading: "Activity type",
+      options: ["Earwigs", "Millipedes", "Pill bugs", "Centipedes"],
+    },
+    {
+      id: "interior-pantry",
+      kind: "pantry",
+      label: "Pantry pests",
+      subheading: "Pantry pest type",
+      options: ["Pantry moths", "Stored-product beetles"],
+    },
+    {
+      id: "interior-silverfish",
+      kind: "silverfish",
+      label: "Silverfish",
+    },
+    {
+      id: "interior-spiders",
+      kind: "interior-spiders",
+      label: "Spiders",
+      subheading: "Spider activity",
+      options: interiorSpiderActivity,
+    },
+  ],
+};
 
 const conditions = [
   "Mulch against foundation",
@@ -36,21 +117,61 @@ const conditions = [
   "Pool cage or lanai web buildup",
 ];
 
-const issueDetails = {
+const findingDetails = {
+  ants: {
+    fallbackObservation: "ant activity",
+    action: "targeted active ant areas and nearby trailing or nesting zones",
+    expectation: "ant activity should decrease as the treatment transfers through the colony",
+  },
+  spiders: {
+    fallbackObservation: "spider activity around the exterior",
+    action: "removed accessible webbing and treated common spider harborage areas",
+    expectation: "some new webbing can appear between services, but activity should be reduced",
+  },
   millipedes: {
-    observation: "millipede activity around moisture-prone exterior areas",
+    fallbackObservation: "millipede activity around moisture-prone exterior areas",
     action: "treated exterior entry points and shaded moisture-prone areas where millipedes commonly travel",
     expectation: "millipede activity may be more noticeable after wet weather but should taper down as treated areas dry and the service takes effect",
   },
+  roaches: {
+    fallbackObservation: "roach activity around exterior harborage areas",
+    action: "treated exterior harborage points where roaches may shelter or move around the home",
+    expectation: "roach sightings should taper down as the treated harborage areas are affected",
+  },
   wasps: {
-    observation: "wasp nesting activity in accessible exterior areas",
+    fallbackObservation: "wasp nesting activity in accessible exterior areas",
     action: "addressed accessible wasp nesting activity where it was safe to treat",
     expectation: "wasp activity around the treated nesting area should slow down over the next few days",
   },
-  roaches: {
-    observation: "roach activity around exterior harborage areas",
-    action: "treated exterior harborage points where roaches may shelter or move around the home",
-    expectation: "roach sightings should taper down as the treated harborage areas are affected",
+  "interior-roaches": {
+    fallbackObservation: "cockroach activity inside the home",
+    action: "treated accessible interior harborage areas and common travel points",
+    expectation: "interior roach activity should reduce as treated areas are affected",
+  },
+  flies: {
+    fallbackObservation: "fly or gnat activity inside the home",
+    action: "treated accessible activity areas and checked likely source points",
+    expectation: "activity should improve as source areas are corrected and the service takes effect",
+  },
+  occasional: {
+    fallbackObservation: "occasional invader activity inside the home",
+    action: "treated accessible entry points and activity areas",
+    expectation: "activity should taper down as treated entry points are affected",
+  },
+  pantry: {
+    fallbackObservation: "pantry pest activity inside the home",
+    action: "checked accessible pantry activity areas and treated appropriate cracks, crevices, and nearby hiding spots",
+    expectation: "activity should reduce as affected items are removed and treated areas take effect",
+  },
+  silverfish: {
+    fallbackObservation: "silverfish activity inside the home",
+    action: "treated accessible cracks, crevices, and hiding areas where silverfish activity was noted",
+    expectation: "silverfish activity should gradually reduce as treated areas are affected",
+  },
+  "interior-spiders": {
+    fallbackObservation: "spider activity inside the home",
+    action: "removed accessible webbing and treated common interior spider harborage areas",
+    expectation: "some webbing can return between services, but interior activity should be reduced",
   },
 };
 
@@ -112,24 +233,26 @@ const gateOptions = [
 ];
 
 const state = {
-  issues: new Set(),
-  ants: new Set(),
-  spiders: new Set(),
+  areas: new Set(),
+  findings: new Set(),
+  subFindings: {},
   conditions: new Set(),
+  conditionsOpen: false,
   gate: "none",
   houseSpecific: "",
 };
 
 const issueList = document.querySelector("#issueList");
-const antPanel = document.querySelector("#antPanel");
-const antList = document.querySelector("#antList");
-const spiderPanel = document.querySelector("#spiderPanel");
-const spiderList = document.querySelector("#spiderList");
+const exteriorPanel = document.querySelector("#exteriorPanel");
+const exteriorIssueList = document.querySelector("#exteriorIssueList");
+const interiorPanel = document.querySelector("#interiorPanel");
+const interiorIssueList = document.querySelector("#interiorIssueList");
+const conditionsToggle = document.querySelector("#conditionsToggle");
+const conditionListWrap = document.querySelector("#conditionListWrap");
 const conditionList = document.querySelector("#conditionList");
 const gateList = document.querySelector("#gateList");
 const houseSpecific = document.querySelector("#houseSpecific");
 const generatedNote = document.querySelector("#generatedNote");
-const llmPrompt = document.querySelector("#llmPrompt");
 const copyStatus = document.querySelector("#copyStatus");
 const generateButton = document.querySelector("#generateButton");
 const copyNoteButton = document.querySelector("#copyNoteButton");
@@ -155,47 +278,108 @@ function toggleSetValue(set, value) {
   set.add(value);
 }
 
+function getFindingById(findingId) {
+  return [...findingGroups.exterior, ...findingGroups.interior].find((finding) => finding.id === findingId);
+}
+
+function getFindingArea(findingId) {
+  if (findingGroups.exterior.some((finding) => finding.id === findingId)) {
+    return "exterior";
+  }
+  if (findingGroups.interior.some((finding) => finding.id === findingId)) {
+    return "interior";
+  }
+  return "";
+}
+
+function getSubSet(findingId) {
+  if (!state.subFindings[findingId]) {
+    state.subFindings[findingId] = new Set();
+  }
+  return state.subFindings[findingId];
+}
+
+function clearAreaFindings(areaId) {
+  findingGroups[areaId].forEach((finding) => {
+    state.findings.delete(finding.id);
+    delete state.subFindings[finding.id];
+  });
+}
+
+function renderFindingGroup(areaId, container) {
+  container.innerHTML = "";
+
+  findingGroups[areaId].forEach((finding) => {
+    const group = document.createElement("div");
+    group.className = "finding-group";
+
+    group.append(
+      createToggleButton(finding.label, state.findings.has(finding.id), () => {
+        toggleSetValue(state.findings, finding.id);
+        if (!state.findings.has(finding.id)) {
+          delete state.subFindings[finding.id];
+        }
+        renderSelections();
+        syncOutputs();
+      }, "pill-button finding-button"),
+    );
+
+    if (finding.options && state.findings.has(finding.id)) {
+      const subPanel = document.createElement("div");
+      subPanel.className = "sub-panel compact-sub-panel";
+
+      const heading = document.createElement("h3");
+      heading.textContent = finding.subheading;
+      subPanel.append(heading);
+
+      const subList = document.createElement("div");
+      subList.className = "pill-stack";
+      subList.setAttribute("aria-label", finding.subheading);
+
+      finding.options.forEach((option) => {
+        const subSet = getSubSet(finding.id);
+        subList.append(
+          createToggleButton(option, subSet.has(option), () => {
+            toggleSetValue(subSet, option);
+            renderSelections();
+            syncOutputs();
+          }),
+        );
+      });
+
+      subPanel.append(subList);
+      group.append(subPanel);
+    }
+
+    container.append(group);
+  });
+}
+
 function renderSelections() {
   issueList.innerHTML = "";
-  issues.forEach((issue) => {
+  serviceAreas.forEach((area) => {
     issueList.append(
-      createToggleButton(issue.label, state.issues.has(issue.id), () => {
-        toggleSetValue(state.issues, issue.id);
-        if (!state.issues.has("ants")) {
-          state.ants.clear();
-        }
-        if (!state.issues.has("spiders")) {
-          state.spiders.clear();
+      createToggleButton(area.label, state.areas.has(area.id), () => {
+        toggleSetValue(state.areas, area.id);
+        if (!state.areas.has(area.id)) {
+          clearAreaFindings(area.id);
         }
         renderSelections();
         syncOutputs();
-      }),
+      }, "pill-button area-button"),
     );
   });
 
-  antPanel.classList.toggle("is-hidden", !state.issues.has("ants"));
-  antList.innerHTML = "";
-  antSpecies.forEach((species) => {
-    antList.append(
-      createToggleButton(species, state.ants.has(species), () => {
-        toggleSetValue(state.ants, species);
-        syncOutputs();
-        renderSelections();
-      }),
-    );
-  });
+  exteriorPanel.classList.toggle("is-hidden", !state.areas.has("exterior"));
+  interiorPanel.classList.toggle("is-hidden", !state.areas.has("interior"));
+  renderFindingGroup("exterior", exteriorIssueList);
+  renderFindingGroup("interior", interiorIssueList);
 
-  spiderPanel.classList.toggle("is-hidden", !state.issues.has("spiders"));
-  spiderList.innerHTML = "";
-  spiderActivity.forEach((activity) => {
-    spiderList.append(
-      createToggleButton(activity, state.spiders.has(activity), () => {
-        toggleSetValue(state.spiders, activity);
-        syncOutputs();
-        renderSelections();
-      }),
-    );
-  });
+  conditionsToggle.textContent = state.conditionsOpen
+    ? `Hide conducive conditions${state.conditions.size ? ` (${state.conditions.size})` : ""}`
+    : `Add conducive conditions${state.conditions.size ? ` (${state.conditions.size})` : ""}`;
+  conditionsToggle.setAttribute("aria-expanded", String(state.conditionsOpen));
+  conditionListWrap.classList.toggle("is-hidden", !state.conditionsOpen);
 
   conditionList.innerHTML = "";
   conditions.forEach((condition) => {
@@ -221,11 +405,20 @@ function renderSelections() {
 }
 
 function getSelectedLabels() {
-  const issueLabels = issues.filter((issue) => state.issues.has(issue.id)).map((issue) => issue.label);
+  const selectedFindings = [...state.findings].map((findingId) => {
+    const finding = getFindingById(findingId);
+    return {
+      id: findingId,
+      area: getFindingArea(findingId),
+      kind: finding.kind,
+      label: finding.label,
+      options: [...getSubSet(findingId)],
+    };
+  });
+
   return {
-    issues: issueLabels,
-    ants: [...state.ants],
-    spiders: [...state.spiders],
+    areas: serviceAreas.filter((area) => state.areas.has(area.id)).map((area) => area.label),
+    findings: selectedFindings,
     conditions: [...state.conditions],
     gate: gateOptions.find((option) => option.id === state.gate)?.label ?? "No gate",
   };
@@ -248,6 +441,10 @@ function normalizeAntSpecies(species) {
   return species.toLowerCase().replace(/ ants$/, " ant");
 }
 
+function normalizeRoachType(type) {
+  return type.replace(/ roaches$/i, " roach");
+}
+
 function cleanHouseSpecific(text) {
   return text.trim().replace(/[.?!]+$/, "");
 }
@@ -256,123 +453,237 @@ function capitalizeSentence(text) {
   return `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
 }
 
-function getSpiderObservation(labels) {
-  if (labels.spiders.includes("Webs") && labels.spiders.includes("Grass/bushes")) {
+function hashText(text) {
+  return [...text].reduce((hash, character) => {
+    return (hash * 31 + character.charCodeAt(0)) >>> 0;
+  }, 17);
+}
+
+function pickVariant(variants, seed, offset = 0) {
+  return variants[(seed + offset) % variants.length];
+}
+
+function getVariationSeed(labels) {
+  return hashText(JSON.stringify({
+    areas: labels.areas,
+    findings: labels.findings.map((finding) => ({
+      id: finding.id,
+      options: finding.options,
+    })),
+    conditions: labels.conditions,
+    gate: labels.gate,
+    houseSpecific: cleanHouseSpecific(state.houseSpecific),
+  }));
+}
+
+function shuffleBySeed(items, seed) {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = (seed + index * 7) % (index + 1);
+    [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+  }
+  return copy;
+}
+
+function getSpiderObservation(finding) {
+  const options = finding.options;
+  if (finding.area === "interior") {
+    if (options.includes("Webs") && options.includes("Corners/closets")) {
+      return "spider activity and webbing around interior corners and closet areas";
+    }
+    if (options.includes("Garage")) {
+      return "spider activity in the garage";
+    }
+    if (options.includes("Webs")) {
+      return "spider activity and webbing inside the home";
+    }
+    return "spider activity inside the home";
+  }
+
+  if (options.includes("Webs") && options.includes("Grass/bushes")) {
     return "spider activity around web-prone areas, grass, and bushes";
   }
-  if (labels.spiders.includes("Webs")) {
+  if (options.includes("Webs")) {
     return "spider activity and webbing around accessible exterior areas";
   }
-  if (labels.spiders.includes("Grass/bushes")) {
+  if (options.includes("Grass/bushes")) {
     return "spider activity around grass and bushes";
   }
   return "spider activity around the exterior";
+}
+
+function getFindingObservation(finding) {
+  if (finding.kind === "ants" && finding.options.length > 0) {
+    return `${toSentenceList(finding.options.map(normalizeAntSpecies))} activity ${finding.area === "interior" ? "inside the home" : "around the exterior"}`;
+  }
+
+  if (finding.kind === "interior-roaches" && finding.options.length > 0) {
+    return `${toSentenceList(finding.options.map(normalizeRoachType))} activity inside the home`;
+  }
+
+  if (finding.kind === "spiders" || finding.kind === "interior-spiders") {
+    return getSpiderObservation(finding);
+  }
+
+  if (finding.options.length > 0) {
+    return `${toSentenceList(finding.options.map((option) => option.toLowerCase()))} activity ${finding.area === "interior" ? "inside the home" : "around the exterior"}`;
+  }
+
+  return findingDetails[finding.kind]?.fallbackObservation ?? `${finding.label.toLowerCase()} activity`;
 }
 
 function getConditionNotes(labels) {
   return labels.conditions.map((condition) => conditionDetails[condition]?.note ?? condition.toLowerCase());
 }
 
+function hasSpiderFinding(labels) {
+  return labels.findings.some((finding) => finding.kind === "spiders" || finding.kind === "interior-spiders");
+}
+
 function getConditionGuidance(labels) {
   return labels.conditions
-    .filter((condition) => !(state.issues.has("spiders") && condition === "Pool cage or lanai web buildup"))
+    .filter((condition) => !(hasSpiderFinding(labels) && condition === "Pool cage or lanai web buildup"))
     .map((condition) => conditionDetails[condition]?.guidance)
     .filter(Boolean)
     .slice(0, 1);
 }
 
-function buildObservation(labels) {
-  const observed = [];
-
-  labels.issues.forEach((issue) => {
-    if (issue === "Ants" && labels.ants.length > 0) {
-      observed.push(`${toSentenceList(labels.ants.map(normalizeAntSpecies))} activity`);
-      return;
-    }
-    if (issue === "Spiders" && labels.spiders.length > 0) {
-      observed.push(getSpiderObservation(labels));
-      return;
-    }
-    const issueId = issues.find((item) => item.label === issue)?.id;
-    observed.push(issueDetails[issueId]?.observation ?? `${issue.toLowerCase()} activity`);
-  });
+function buildObservation(labels, seed) {
+  const observed = labels.findings.map(getFindingObservation);
 
   if (observed.length === 0) {
     observed.push("no major active pest issues");
   }
 
   const conditionNotes = getConditionNotes(labels);
+  const houseDetail = cleanHouseSpecific(state.houseSpecific);
+  const opening = pickVariant([
+    `I found ${toSentenceList(observed)} during today's service.`,
+    `During today's service, I found ${toSentenceList(observed)}.`,
+    `Today's inspection showed ${toSentenceList(observed)}.`,
+  ], seed);
+
   const conditionText = conditionNotes.length
-    ? ` I also noted ${toSentenceList(conditionNotes)}.`
+    ? pickVariant([
+      `I also noted ${toSentenceList(conditionNotes)}.`,
+      `I also observed ${toSentenceList(conditionNotes)} that could contribute to pest pressure.`,
+      `I noted ${toSentenceList(conditionNotes)} while checking the property.`,
+    ], seed, 1)
     : "";
 
-  const houseText = state.houseSpecific.trim() ? ` For this home, ${cleanHouseSpecific(state.houseSpecific)}.` : "";
+  const houseText = houseDetail
+    ? pickVariant([
+      `For this home, ${houseDetail}.`,
+      `A house-specific note from today's visit: ${houseDetail}.`,
+      `I also noted for this home that ${houseDetail}.`,
+    ], seed, 2)
+    : "";
 
-  return `I found ${toSentenceList(observed)} during today's service.${conditionText}${houseText}`;
+  return [opening, conditionText, houseText].filter(Boolean).join(" ");
 }
 
-function buildTreatment(labels) {
-  const actions = ["completed a thorough exterior service", "treated the foundation, entry points, and accessible activity areas"];
+function buildTreatment(labels, seed) {
+  const hasInterior = labels.findings.some((finding) => finding.area === "interior");
+  const hasExterior = labels.findings.some((finding) => finding.area === "exterior") || state.areas.has("exterior");
+  const actions = [];
 
-  if (state.issues.has("ants")) {
-    actions.push("targeted active ant areas and nearby trailing or nesting zones");
+  if (hasExterior) {
+    actions.push(pickVariant([
+      "completed a thorough exterior service",
+      "serviced the exterior perimeter",
+      "completed the exterior treatment around the home",
+    ], seed, 3));
+    actions.push(pickVariant([
+      "treated the foundation, entry points, and accessible exterior activity areas",
+      "treated accessible entry points, foundation areas, and exterior activity zones",
+      "focused treatment around the foundation, entry points, and active exterior areas",
+    ], seed, 4));
   }
-  if (state.issues.has("spiders")) {
-    actions.push("removed accessible webbing and treated common spider harborage areas");
+
+  if (hasInterior) {
+    actions.push(pickVariant([
+      "serviced accessible interior areas where activity was noted",
+      "treated accessible interior activity areas",
+      "checked and serviced the interior areas tied to today's findings",
+    ], seed, 5));
   }
-  Object.keys(issueDetails).forEach((issueId) => {
-    if (state.issues.has(issueId)) {
-      actions.push(issueDetails[issueId].action);
+
+  if (actions.length === 0) {
+    actions.push(pickVariant([
+      "completed the scheduled service and inspected accessible areas",
+      "checked accessible service areas and completed the regular treatment",
+      "performed the scheduled service and monitored accessible areas",
+    ], seed, 6));
+  }
+
+  labels.findings.forEach((finding) => {
+    const action = findingDetails[finding.kind]?.action;
+    if (action && !actions.includes(action)) {
+      actions.push(action);
     }
   });
+
   if (labels.conditions.length > 0) {
-    actions.push("checked nearby areas connected to the conditions noted");
+    actions.push(pickVariant([
+      "checked nearby areas connected to the conditions noted",
+      "paid extra attention to areas around the conditions noted",
+      "reviewed and treated nearby areas where those conditions may contribute to activity",
+    ], seed, 7));
   }
 
-  const gateText = state.gate === "closed" ? " Gates were closed when finished." : "";
-  const accessText = state.gate === "not-accessed" ? " A gated area was not accessed during this visit." : "";
+  const gateText = state.gate === "closed"
+    ? pickVariant(["Gates were closed when finished.", "I closed the gates before leaving.", "All accessed gates were closed after service."], seed, 8)
+    : "";
+  const accessText = state.gate === "not-accessed"
+    ? pickVariant(["A gated area was not accessed during this visit.", "One gated area was not accessible at the time of service.", "A gated section could not be accessed today."], seed, 9)
+    : "";
 
-  return `I ${toSentenceList(actions)}.${gateText}${accessText}`;
+  const treatmentLead = pickVariant(["I", "For treatment, I", "As part of the service, I"], seed, 10);
+  const treatmentSentence = `${treatmentLead} ${toSentenceList(actions)}.`;
+  return [treatmentSentence, gateText, accessText].filter(Boolean).join(" ");
 }
 
-function buildExpectation(labels) {
+function buildExpectation(labels, seed) {
   const expectations = [];
 
-  if (state.issues.has("ants")) {
-    expectations.push("ant activity should decrease as the treatment transfers through the colony");
-  }
-  if (state.issues.has("spiders")) {
-    expectations.push("some new webbing can appear between services, but activity should be reduced");
-  }
-  Object.keys(issueDetails).forEach((issueId) => {
-    if (state.issues.has(issueId)) {
-      expectations.push(issueDetails[issueId].expectation);
+  labels.findings.forEach((finding) => {
+    const expectation = findingDetails[finding.kind]?.expectation;
+    if (expectation && !expectations.includes(expectation)) {
+      expectations.push(expectation);
     }
   });
+
   expectations.push(...getConditionGuidance(labels));
+
   if (expectations.length === 0) {
     expectations.push("the home looked good overall, and I will continue monitoring on future visits");
   }
 
-  const sentence = toSentenceList(expectations);
+  const orderedExpectations = expectations.length > 1 ? shuffleBySeed(expectations, seed) : expectations;
+  const sentence = toSentenceList(orderedExpectations);
   return `${capitalizeSentence(sentence)}.`;
 }
 
 function buildNote() {
   const labels = getSelectedLabels();
-  const observation = buildObservation(labels);
-  const treatment = buildTreatment(labels);
-  const expectation = buildExpectation(labels);
+  const seed = getVariationSeed(labels);
+  const observation = buildObservation(labels, seed);
+  const treatment = buildTreatment(labels, seed);
+  const expectation = buildExpectation(labels, seed);
+  const orders = [
+    [observation, treatment, expectation],
+    [observation, expectation, treatment],
+    [treatment, observation, expectation],
+  ];
 
-  return `${observation} ${treatment} ${expectation}`;
+  return pickVariant(orders, seed, 11).join(" ");
 }
 
 function buildPrompt() {
   const labels = getSelectedLabels();
   const details = {
-    pestIssues: labels.issues,
-    antSpecies: labels.ants,
-    spiderActivity: labels.spiders,
+    serviceAreas: labels.areas,
+    findings: labels.findings,
     conduciveConditions: labels.conditions,
     gateStatus: labels.gate,
     houseSpecific: state.houseSpecific.trim(),
@@ -399,9 +710,8 @@ ${JSON.stringify(details, null, 2)}`;
 
 function syncOutputs({ regenerate = true } = {}) {
   state.houseSpecific = houseSpecific.value;
-  llmPrompt.value = buildPrompt();
   if (regenerate) {
-    generatedNote.value = buildNote();
+    generatedNote.textContent = buildNote();
   }
 }
 
@@ -412,8 +722,12 @@ function setStatus(message, type = "") {
 
 async function writeToClipboard(text) {
   if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    return;
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch {
+      // Fall back to the textarea copy path below.
+    }
   }
 
   const textarea = document.createElement("textarea");
@@ -422,9 +736,14 @@ async function writeToClipboard(text) {
   textarea.style.position = "fixed";
   textarea.style.top = "-1000px";
   document.body.append(textarea);
+  textarea.focus();
   textarea.select();
-  document.execCommand("copy");
+  const didCopy = document.execCommand("copy");
   textarea.remove();
+
+  if (!didCopy) {
+    throw new Error("Copy command failed");
+  }
 }
 
 async function copyText(text, successMessage) {
@@ -438,10 +757,11 @@ async function copyText(text, successMessage) {
 }
 
 function resetForm() {
-  state.issues.clear();
-  state.ants.clear();
-  state.spiders.clear();
+  state.areas.clear();
+  state.findings.clear();
+  state.subFindings = {};
   state.conditions.clear();
+  state.conditionsOpen = false;
   state.gate = "none";
   state.houseSpecific = "";
   houseSpecific.value = "";
@@ -451,15 +771,18 @@ function resetForm() {
   window.setTimeout(() => setStatus("Ready"), 900);
 }
 
+conditionsToggle.addEventListener("click", () => {
+  state.conditionsOpen = !state.conditionsOpen;
+  renderSelections();
+});
 houseSpecific.addEventListener("input", () => syncOutputs());
-generatedNote.addEventListener("input", () => syncOutputs({ regenerate: false }));
 generateButton.addEventListener("click", () => {
   syncOutputs();
   setStatus("Generated", "success");
   window.setTimeout(() => setStatus("Ready"), 1100);
 });
-copyNoteButton.addEventListener("click", () => copyText(generatedNote.value, "Note copied"));
-copyPromptButton.addEventListener("click", () => copyText(llmPrompt.value, "Prompt copied"));
+copyNoteButton.addEventListener("click", () => copyText(generatedNote.textContent, "Note copied"));
+copyPromptButton.addEventListener("click", () => copyText(buildPrompt(), "Prompt copied"));
 resetButton.addEventListener("click", resetForm);
 topResetButton.addEventListener("click", resetForm);
 
