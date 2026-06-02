@@ -1,6 +1,7 @@
 const serviceAreas = [
   { id: "exterior", label: "Exterior" },
   { id: "interior", label: "Interior" },
+  { id: "mosquito", label: "Mosquito" },
 ];
 
 const antSpecies = [
@@ -98,6 +99,15 @@ const findingGroups = {
       label: "Spiders",
       subheading: "Spider activity",
       options: interiorSpiderActivity,
+    },
+  ],
+  mosquito: [
+    {
+      id: "mosquito-mms",
+      kind: "mosquito-mms",
+      label: "MMS",
+      subheading: "MMS details",
+      options: ["Boxes serviced"],
     },
   ],
 };
@@ -247,6 +257,9 @@ const exteriorPanel = document.querySelector("#exteriorPanel");
 const exteriorIssueList = document.querySelector("#exteriorIssueList");
 const interiorPanel = document.querySelector("#interiorPanel");
 const interiorIssueList = document.querySelector("#interiorIssueList");
+const mosquitoPanel = document.querySelector("#mosquitoPanel");
+const mosquitoIssueList = document.querySelector("#mosquitoIssueList");
+const conditionsPanel = document.querySelector("#conditionsPanel");
 const conditionsToggle = document.querySelector("#conditionsToggle");
 const conditionListWrap = document.querySelector("#conditionListWrap");
 const conditionList = document.querySelector("#conditionList");
@@ -279,15 +292,14 @@ function toggleSetValue(set, value) {
 }
 
 function getFindingById(findingId) {
-  return [...findingGroups.exterior, ...findingGroups.interior].find((finding) => finding.id === findingId);
+  return [...findingGroups.exterior, ...findingGroups.interior, ...findingGroups.mosquito].find((finding) => finding.id === findingId);
 }
 
 function getFindingArea(findingId) {
-  if (findingGroups.exterior.some((finding) => finding.id === findingId)) {
-    return "exterior";
-  }
-  if (findingGroups.interior.some((finding) => finding.id === findingId)) {
-    return "interior";
+  for (const areaId of Object.keys(findingGroups)) {
+    if (findingGroups[areaId].some((finding) => finding.id === findingId)) {
+      return areaId;
+    }
   }
   return "";
 }
@@ -361,6 +373,18 @@ function renderSelections() {
     issueList.append(
       createToggleButton(area.label, state.areas.has(area.id), () => {
         toggleSetValue(state.areas, area.id);
+        if (state.areas.has("mosquito") && area.id === "mosquito") {
+          ["exterior", "interior"].forEach((areaToClear) => {
+            state.areas.delete(areaToClear);
+            clearAreaFindings(areaToClear);
+          });
+          state.conditions.clear();
+          state.conditionsOpen = false;
+        }
+        if (state.areas.has(area.id) && area.id !== "mosquito") {
+          state.areas.delete("mosquito");
+          clearAreaFindings("mosquito");
+        }
         if (!state.areas.has(area.id)) {
           clearAreaFindings(area.id);
         }
@@ -372,8 +396,11 @@ function renderSelections() {
 
   exteriorPanel.classList.toggle("is-hidden", !state.areas.has("exterior"));
   interiorPanel.classList.toggle("is-hidden", !state.areas.has("interior"));
+  mosquitoPanel.classList.toggle("is-hidden", !state.areas.has("mosquito"));
+  conditionsPanel.classList.toggle("is-hidden", state.areas.has("mosquito"));
   renderFindingGroup("exterior", exteriorIssueList);
   renderFindingGroup("interior", interiorIssueList);
+  renderFindingGroup("mosquito", mosquitoIssueList);
 
   conditionsToggle.textContent = state.conditionsOpen
     ? `Hide conducive conditions${state.conditions.size ? ` (${state.conditions.size})` : ""}`
@@ -664,8 +691,81 @@ function buildExpectation(labels, seed) {
   return `${capitalizeSentence(sentence)}.`;
 }
 
+function hasMmsService(labels) {
+  return labels.findings.some((finding) => finding.id === "mosquito-mms");
+}
+
+function hasBoxesServiced(labels) {
+  return labels.findings.some((finding) => finding.id === "mosquito-mms" && finding.options.includes("Boxes serviced"));
+}
+
+function buildMosquitoNote(labels) {
+  const seed = getVariationSeed(labels);
+  const houseDetail = cleanHouseSpecific(state.houseSpecific);
+  const isMms = hasMmsService(labels);
+  const boxesServiced = hasBoxesServiced(labels);
+
+  const observation = isMms
+    ? pickVariant([
+      "I completed the monthly mosquito service today and checked the mosquito-prone areas around the property.",
+      "Today's monthly mosquito service focused on the shaded and mosquito-prone areas around the home.",
+      "During today's MMS visit, I checked the common mosquito resting and activity areas around the property.",
+    ], seed)
+    : pickVariant([
+      "I noted mosquito activity and mosquito-prone resting areas around the property today.",
+      "During today's mosquito service, I checked shaded vegetation and common mosquito resting areas around the home.",
+      "Today's mosquito inspection showed conditions where adult mosquitoes can rest around the exterior.",
+    ], seed);
+
+  const treatment = isMms
+    ? pickVariant([
+      "I applied the monthly mosquito treatment to accessible resting areas, vegetation, and shaded zones where mosquitoes commonly harbor.",
+      "I completed the MMS treatment around accessible mosquito resting areas and exterior harborage zones.",
+      "I serviced the property with the monthly mosquito treatment, focusing on shaded vegetation and areas where mosquitoes are likely to rest.",
+    ], seed, 1)
+    : pickVariant([
+      "I applied a mosquito fogging treatment using an adulticide and growth regulator to accessible mosquito resting areas around the exterior.",
+      "I treated accessible exterior mosquito areas with the fogger using an adulticide and growth regulator.",
+      "I completed the mosquito fogging service, applying adulticide and growth regulator to accessible resting and harborage areas.",
+    ], seed, 1);
+
+  const boxText = boxesServiced
+    ? pickVariant([
+      "I also serviced the mosquito boxes and checked the water treatment inside.",
+      "The mosquito boxes were serviced today, including the water treatment inside the boxes.",
+      "I checked and serviced the mosquito boxes as part of today's MMS visit.",
+    ], seed, 2)
+    : "";
+
+  const houseText = houseDetail
+    ? pickVariant([
+      `For this home, ${houseDetail}.`,
+      `A house-specific note from today's mosquito service: ${houseDetail}.`,
+      `I also noted for this mosquito visit that ${houseDetail}.`,
+    ], seed, 3)
+    : "";
+
+  const expectation = isMms
+    ? pickVariant([
+      "This monthly service is designed to help keep mosquito pressure reduced between visits, though mosquitoes can continue to move in from nearby standing water, landscaping, or neighboring areas.",
+      "The monthly treatment should help reduce mosquito pressure over time, but some activity can return between visits due to weather, standing water, and nearby breeding sources.",
+      "You should see mosquito pressure stay more manageable with the recurring service, while keeping standing water reduced will help support the treatment.",
+    ], seed, 4)
+    : pickVariant([
+      "Mosquito activity should be reduced after the treatment has time to work, although some mosquitoes can return from nearby standing water, landscaping, or neighboring areas.",
+      "The treatment should help reduce adult mosquito activity and interrupt development, but activity can fluctuate with weather and nearby breeding sources.",
+      "You should see activity decrease as the treatment takes effect, and reducing standing water around the property will help improve results.",
+    ], seed, 4);
+
+  return [observation, treatment, boxText, houseText, expectation].filter(Boolean).join(" ");
+}
+
 function buildNote() {
   const labels = getSelectedLabels();
+  if (state.areas.has("mosquito")) {
+    return buildMosquitoNote(labels);
+  }
+
   const seed = getVariationSeed(labels);
   const observation = buildObservation(labels, seed);
   const treatment = buildTreatment(labels, seed);
